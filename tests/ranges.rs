@@ -1,10 +1,10 @@
-use grafite::{OrderPreservingHasher, RangeFilter};
+use grafite::{PairwiseIndependentHasher, RangeFilter};
 
 #[test]
 fn test_basic() {
     let values = [1, 2, 3, 7, 8, 9, 15, 20];
 
-    let hasher = OrderPreservingHasher::new(values.len(), 0.01, 20).unwrap();
+    let hasher = PairwiseIndependentHasher::new(values.len(), 0.01, 20).unwrap();
 
     let rf = RangeFilter::new(values.iter().copied(), hasher);
 

@@ -1,4 +1,4 @@
-use grafite::{OrderPreservingHasher, RangeFilter};
+use grafite::{PairwiseIndependentHasher, RangeFilter};
 use rand::prelude::*;
 use rayon::prelude::*;
 use std::sync::atomic::{AtomicUsize, Ordering};
@@ -19,7 +19,8 @@ fn bench(num_elements: usize, bits_per_key: u8, max_interval: u64) {
     println!("Finished generating {} values", num_elements);
 
     let hasher =
-        OrderPreservingHasher::new_with_budget(num_elements, bits_per_key, max_interval).unwrap();
+        PairwiseIndependentHasher::new_with_space_budget(num_elements, bits_per_key, max_interval)
+            .unwrap();
 
     let rf = RangeFilter::new(values.iter().copied(), hasher);
 

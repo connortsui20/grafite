@@ -7,7 +7,7 @@ authors = ["Connor Tsui"]
 license = "MIT"
 readme = "README.md"
 repository = "https://github.com/Connortsui20/grafite"
-docs = "https://docs.rs/grafite/latest/grafite/"
+documentation = "https://docs.rs/grafite/latest/grafite/"
 keywords = ["filter", "range", "bloom", "search", "succinct"]
 categories = ["database-implementations", "data-structures", "algorithms"]
 

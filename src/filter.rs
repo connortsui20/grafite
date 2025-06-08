@@ -1,13 +1,13 @@
 use std::ops::RangeBounds;
 use vers_vecs::EliasFanoVec;
 
-use crate::OrderPreservingHasher;
+use crate::PairwiseIndependentHasher;
 
 /// The Grafite Range Filter.
 #[derive(Debug, Clone)]
 pub struct RangeFilter {
     /// The hash function used to encode the hash values.
-    pub hasher: OrderPreservingHasher,
+    pub hasher: PairwiseIndependentHasher,
     /// A succinct encoding of a non-decreasing sequence of integer hash values.
     pub ef: EliasFanoVec,
 }
@@ -15,18 +15,18 @@ pub struct RangeFilter {
 /// The `RangeFilter` must be built on items that are able to be turned into a 64-bit integer.
 impl RangeFilter {
     /// Creates a new `RangeFilter` given a slice of values.
-    pub fn new<I>(values: I, hasher: OrderPreservingHasher) -> Self
+    pub fn new<I>(values: I, hasher: PairwiseIndependentHasher) -> Self
     where
         I: Iterator<Item = u64>,
     {
         // Hash all items in the input set.
-        let mut hashes: Vec<u64> = values.map(|x| hasher.hash(x)).collect();
+        let mut hashes: Vec<u64> = values.map(|x| hasher.local_hash(x)).collect();
 
         // Sort and then remove all duplicates.
         hashes.sort_unstable();
         hashes.dedup();
 
-        assert!(hashes[hashes.len() - 1] < hasher.reduced_universe());
+        assert!(hashes[hashes.len() - 1] < hasher.reduced_universe_size());
 
         Self {
             hasher,
@@ -51,8 +51,8 @@ impl RangeFilter {
             std::ops::Bound::Unbounded => u64::MAX,
         };
 
-        let start_hash = self.hasher.hash(start);
-        let end_hash = self.hasher.hash(end);
+        let start_hash = self.hasher.local_hash(start);
+        let end_hash = self.hasher.local_hash(end);
 
         // If the start hash is greater than the end hash, then the range has wrapped around due to
         // the reduced universe. Thus we can just check the min and max hashes to see if there is an
@@ -86,7 +86,7 @@ impl RangeFilter {
     /// queried, and the total number of distinct values inside the range filter.
     pub fn false_positive_rate(&self, num_elements: usize, max_interval: u64) -> f64 {
         // The false positive rate is equal to nL / r.
-        (num_elements as u64 * max_interval) as f64 / self.hasher.reduced_universe() as f64
+        (num_elements as u64 * max_interval) as f64 / self.hasher.reduced_universe_size() as f64
     }
 
     /// Returns the amount of space required to store this `RangeFilter` on the heap.
