@@ -5,7 +5,7 @@ use vers_vecs::EliasFanoVec;
 /// The Grafite Range Filter.
 #[derive(Debug, Clone)]
 pub struct RangeFilter {
-    /// The hash function used to encode the hash values.
+    /// The order-preserving hash function used to encode the hash values.
     hasher: PairwiseIndependentHasher,
 
     /// A succinct encoding of a non-decreasing sequence of integer hash values.
@@ -66,16 +66,23 @@ impl RangeFilter {
             std::ops::Bound::Unbounded => u64::MAX,
         };
 
+        // Hash the range endpoints so that we can check if there is a value in between them.
         let start_hash = self.hasher.local_hash(start);
         let end_hash = self.hasher.local_hash(end);
 
-        // If the start hash is greater than the end hash, then the range has wrapped around due to
-        // the reduced universe. Thus we can just check the min and max hashes to see if there is an
-        // element between the endpoints.
+        // Since the local hash function is order-preserving, checking if there is a hash value
+        // between the hashes of the range endpoints will also tell us if there existed a value
+        // within the original range endpoints.
+
+        // If the start hash is greater than the end hash, then the range has "wrapped around" since
+        // the hashes are computed modulo the reduced universe.
+        // We can simply check the minimum and maximum hashes to see if there exists an element
+        // between the range endpoints.
         if start_hash > end_hash {
-            return self.min_hash() <= end_hash || self.max_hash() >= start_hash;
+            return self.min_hash() <= end_hash || start_hash <= self.max_hash();
         }
 
+        // Otherwise, we just check if there exists a hash value between the start and end hashes.
         self.ef
             .predecessor(end_hash)
             .is_some_and(|predecessor| predecessor >= start_hash)
