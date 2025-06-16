@@ -1,3 +1,5 @@
+//! This module contains the [`RangeFilter`] type definition and implementation.
+
 use crate::PairwiseIndependentHasher;
 use std::ops::RangeBounds;
 use vers_vecs::EliasFanoVec;

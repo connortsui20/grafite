@@ -1,7 +1,11 @@
-//! This module contains the [`PairwiseIndependentHasher`] type, which is a helper struct for
-//! defining a hash function that preserves integer key ordering modulo a reduced universe.
+//! This module contains types and definitions for functionality related to hashing.
 //!
-//! See the documentation for [`PairwiseIndependentHasher`] for more information.
+//! The [`PairwiseIndependentHasher`] type is a helper struct for defining a "local" hash function
+//! that preserves integer key ordering modulo a reduced universe. See the documentation for
+//! [`PairwiseIndependentHasher`] for more information.
+//!
+//! This module also contains a [`ParamError`] error type that represents the different ways that
+//! the range filter can be incorrectly constructed.
 
 use crate::utils::gen_prime;
 use rand::Rng;
@@ -32,6 +36,9 @@ pub enum ParamError {
 ///
 /// In addition to different kinds of constructors for the hash function, this type has both a
 /// [`Self::hash`] and a [`Self::local_hash`] method.
+///
+/// The [`Self::local_hash`] method is special in that, on top of being a pairwise-independent hash
+/// function, it preserves order modulo the reduced universe (thus preserving locality).
 ///
 /// TODO more docs on the difference between the two hash functions and the different constructors.
 #[derive(Debug, Clone, Copy)]

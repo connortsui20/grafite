@@ -6,4 +6,4 @@ mod hash;
 mod utils;
 
 pub use crate::filter::RangeFilter;
-pub use crate::hash::*;
+pub use crate::hash::{PairwiseIndependentHasher, ParamError};
