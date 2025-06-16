@@ -15,4 +15,7 @@ categories = ["database-implementations", "data-structures", "algorithms"]
 miller_rabin = "1.1.1" # For checking if a number is prime.
 rand = "0.9.1"
 rayon = "1.10.0"
-vers-vecs = "1.7.0" # For the implementation of the Elias-Fano encoding.
+vers-vecs = "1.7.0"    # For the implementation of the Elias-Fano encoding.
+
+# Pinned for -Z minimal-versions.
+num-bigint = "0.4.2"
