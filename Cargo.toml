@@ -12,7 +12,7 @@ keywords = ["filter", "range", "bloom", "search", "succinct"]
 categories = ["database-implementations", "data-structures", "algorithms"]
 
 [dependencies]
-miller_rabin = "1.1"
-rand = "0.8"
-vers-vecs = "1.4"
-rayon = "1.10"
+miller_rabin = "1.1.1" # For checking if a number is prime.
+rand = "0.9.1"
+rayon = "1.10.0"
+vers-vecs = "1.7.0"

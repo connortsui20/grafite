@@ -1,7 +1,6 @@
+use crate::PairwiseIndependentHasher;
 use std::ops::RangeBounds;
 use vers_vecs::EliasFanoVec;
-
-use crate::PairwiseIndependentHasher;
 
 /// The Grafite Range Filter.
 #[derive(Debug, Clone)]

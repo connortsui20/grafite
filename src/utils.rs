@@ -12,7 +12,7 @@ const ITERATIONS: usize = 128;
 ///
 /// Panics if the range is empty.
 pub fn gen_random(range: Range<u64>) -> u64 {
-    rand::thread_rng().gen_range(range)
+    rand::rng().random_range(range)
 }
 
 /// Deterministically checks if a number is prime.
@@ -39,10 +39,10 @@ pub fn is_prime(n: u64) -> bool {
 ///
 /// Panics if the range is empty.
 pub fn gen_prime(range: Range<u64>) -> u64 {
-    let mut rng = rand::thread_rng();
+    let mut rng = rand::rng();
 
     loop {
-        let attempt = rng.gen_range(range.clone());
+        let attempt = rng.random_range(range.clone());
 
         if miller_rabin::is_prime(&attempt, ITERATIONS) {
             return attempt;

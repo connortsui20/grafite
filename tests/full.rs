@@ -1,5 +1,5 @@
 use grafite::{PairwiseIndependentHasher, RangeFilter};
-use rand::prelude::*;
+use rand::Rng;
 use rayon::prelude::*;
 use std::sync::atomic::{AtomicUsize, Ordering};
 
@@ -13,7 +13,7 @@ fn bench(num_elements: usize, bits_per_key: u8, max_interval: u64) {
 
     let mut values: Vec<u64> = (0..num_elements)
         .into_par_iter()
-        .map(|_| thread_rng().gen())
+        .map(|_| rand::rng().random())
         .collect();
 
     println!("Finished generating {} values", num_elements);
@@ -42,7 +42,7 @@ fn bench(num_elements: usize, bits_per_key: u8, max_interval: u64) {
     println!("Running {} queries", NUM_ITERATIONS);
 
     (0..NUM_ITERATIONS).into_par_iter().for_each(|_| {
-        let x: u64 = thread_rng().gen();
+        let x: u64 = rand::rng().random();
 
         let res = rf.query(x..x + max_interval);
 
