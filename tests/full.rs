@@ -66,9 +66,14 @@ fn bench(num_elements: usize, bits_per_key: u8, max_interval: u64) {
 }
 
 #[test]
-fn full_benches() {
+fn bench_medium() {
     bench(200_000, 12, 1 << 5);
     bench(200_000, 16, 1 << 10);
+}
+
+#[ignore]
+#[test]
+fn bench_large() {
     bench(200_000_000, 12, 1 << 5);
     bench(200_000_000, 16, 1 << 10);
 }
