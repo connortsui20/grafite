@@ -5,11 +5,10 @@ use vers_vecs::EliasFanoVec;
 /// The Grafite Range Filter.
 #[derive(Debug, Clone)]
 pub struct RangeFilter {
-    /// The order-preserving hash function used to encode the hash values.
-    hasher: PairwiseIndependentHasher,
-
     /// A succinct encoding of a non-decreasing sequence of integer hash values.
-    ef: EliasFanoVec,
+    pub ef: EliasFanoVec,
+    /// The order-preserving hash function used to encode the hash values.
+    pub hasher: PairwiseIndependentHasher,
 }
 
 /// The `RangeFilter` must be built on items that are able to be turned into a 64-bit integer.
@@ -96,24 +95,5 @@ impl RangeFilter {
     /// Gets the maximum hash value in the sorted hash codes.
     fn max_hash(&self) -> u64 {
         self.ef.get_unchecked(self.ef.len() - 1)
-    }
-    /// Returns the false positive rate, epsilon.
-    ///
-    /// The false positive rate is determined by the hash function used, the maximum range of values
-    /// queried, and the total number of distinct values inside the range filter.
-    pub fn false_positive_rate(&self, num_elements: usize, max_interval: u64) -> f64 {
-        // The false positive rate is equal to nL / r.
-        let nl = (num_elements as u64 * max_interval) as f64;
-        let r = self.hasher.reduced_universe_size() as f64;
-
-        nl / r
-    }
-
-    /// Returns the amount of space required to store this `RangeFilter` on the heap.
-    ///
-    /// Internally, this function simply calls [`heap_size`](EliasFanoVec::heap_size) on the inner
-    /// [`EliasFanoVec`] structure.
-    pub fn heap_size(&self) -> usize {
-        self.ef.heap_size()
     }
 }

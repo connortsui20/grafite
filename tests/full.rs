@@ -33,8 +33,8 @@ fn bench(num_elements: usize, bits_per_key: u8, max_interval: u64) {
 
     eprintln!(
         "The range filter takes up {} bytes of space.\nExpected false positive rate of {}",
-        rf.heap_size(),
-        rf.false_positive_rate(num_elements, max_interval)
+        rf.ef.heap_size(),
+        rf.hasher.false_positive_rate(num_elements, max_interval)
     );
 
     // Sort the values to make verifaction faster with binary search.
@@ -60,7 +60,7 @@ fn bench(num_elements: usize, bits_per_key: u8, max_interval: u64) {
 
     eprintln!("Measured false positive rate: {measured_epsilon}");
     assert!(
-        measured_epsilon <= 1.05 * rf.false_positive_rate(num_elements, max_interval),
+        measured_epsilon <= 1.05 * rf.hasher.false_positive_rate(num_elements, max_interval),
         "False positive rate was more than 5% higher than expected"
     )
 }

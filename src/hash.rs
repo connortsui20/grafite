@@ -55,9 +55,9 @@ impl PairwiseIndependentHasher {
     ///
     /// See Section 3 of the original paper for more information on how the hash function works and
     /// behaves.
-    /// 
+    ///
     /// # Errors
-    /// 
+    ///
     /// TODO
     pub fn new(num_elements: usize, epsilon: f64, max_interval: u64) -> Result<Self, ParamError> {
         if epsilon <= 0.0 || 1.0 <= epsilon {
@@ -104,9 +104,9 @@ impl PairwiseIndependentHasher {
     ///
     /// This function is used in [`Self::new_with_space_budget`] to calculate the false positive
     /// rate (epsilon).
-    /// 
+    ///
     /// # Errors
-    /// 
+    ///
     /// TODO
     pub fn epsilon_with_space_budget(
         bits_per_key: u8,
@@ -126,9 +126,9 @@ impl PairwiseIndependentHasher {
     /// Internally, this function will just calculate the false positive rate via
     /// `epsilon_with_budget` and use that `epsilon` as the parameter for the [`new`](Self::new)
     /// method above.
-    /// 
+    ///
     /// # Errors
-    /// 
+    ///
     /// TODO
     pub fn new_with_space_budget(
         num_elements: usize,
@@ -170,11 +170,6 @@ impl PairwiseIndependentHasher {
         }
     }
 
-    /// Returns the size of the reduced universe that the hash function maps to.
-    pub fn reduced_universe_size(&self) -> u64 {
-        self.reduced_universe_size
-    }
-
     // Hashes an integer value using a hash function taken from a pairwise-independent family.
     pub fn hash(&self, x: u64) -> u64 {
         (self.slope.wrapping_mul(x).wrapping_add(self.intercept) % self.large_prime)
@@ -190,6 +185,23 @@ impl PairwiseIndependentHasher {
         let q = self.hash(inner);
 
         q.wrapping_add(x) % self.reduced_universe_size
+    }
+
+    /// Returns the size of the reduced universe that the hash function maps to.
+    pub fn reduced_universe_size(&self) -> u64 {
+        self.reduced_universe_size
+    }
+
+    /// Returns the false positive rate, epsilon.
+    ///
+    /// The false positive rate is determined by the hash function used, the maximum range of values
+    /// queried, and the total number of distinct values inside the range filter.
+    pub fn false_positive_rate(&self, num_elements: usize, max_interval: u64) -> f64 {
+        // The false positive rate is equal to nL / r.
+        let nl = (num_elements as u64 * max_interval) as f64;
+        let r = self.reduced_universe_size as f64;
+
+        nl / r
     }
 
     /// Returns the maximum range interval given the number of elements in the set and the false
