@@ -1,12 +1,12 @@
 [package]
 name = "grafite"
 description = "The Grafite Range Filter."
-version = "0.1.1"
+version = "0.1.2"
 edition = "2021"
 authors = ["Connor Tsui"]
 license = "MIT"
 readme = "README.md"
-repository = "https://github.com/Connortsui20/grafite"
+repository = "https://github.com/connortsui20/grafite"
 documentation = "https://docs.rs/grafite/latest/grafite/"
 keywords = ["filter", "range", "bloom", "search", "succinct"]
 categories = ["database-implementations", "data-structures", "algorithms"]
@@ -15,4 +15,4 @@ categories = ["database-implementations", "data-structures", "algorithms"]
 miller_rabin = "1.1.1" # For checking if a number is prime.
 rand = "0.9.1"
 rayon = "1.10.0"
-vers-vecs = "1.7.0"
+vers-vecs = "1.7.0" # For the implementation of the Elias-Fano encoding.

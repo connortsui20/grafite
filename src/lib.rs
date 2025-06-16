@@ -1,5 +1,4 @@
 #![doc = include_str!("../README.md")]
-#![warn(clippy::all, clippy::pedantic, clippy::nursery, clippy::cargo)]
 
 mod filter;
 mod hash;
