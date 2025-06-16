@@ -13,13 +13,13 @@ The Grafite data structure relies on the Elias-Fano encoding of non-decreasing i
 # Examples
 
 ```rust
-use grafite::{OrderPreservingHasher, RangeFilter};
+use grafite::{PairwiseIndependentHasher, RangeFilter};
 
 let values = [1, 2, 3, 7, 8, 9, 15, 20];
 
 let epsilon = 0.01;
 let max_query_range = 20;
-let hasher = OrderPreservingHasher::new(values.len(), epsilon, max_query_range)
+let hasher = PairwiseIndependentHasher::new(values.len(), epsilon, max_query_range)
     .expect("The input parameters should be valid");
 
 let rf = RangeFilter::new(values.iter().copied(), hasher);
