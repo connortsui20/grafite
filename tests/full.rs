@@ -7,8 +7,10 @@ const NUM_ITERATIONS: usize = 1_000_000_000;
 
 fn bench(num_elements: usize, bits_per_key: u8, max_interval: u64) {
     println!(
-        "\n\nBeginning benchmark of {} elements, {} bits per key, anx a maximum query interval of {}\n\n",
-        num_elements, bits_per_key, max_interval
+        "\n\n\
+        Beginning benchmark of {num_elements} elements, {bits_per_key} bits per key,\
+        and a maximum query interval of {max_interval}\
+        \n\n"
     );
 
     let mut values: Vec<u64> = (0..num_elements)
@@ -16,7 +18,7 @@ fn bench(num_elements: usize, bits_per_key: u8, max_interval: u64) {
         .map(|_| rand::rng().random())
         .collect();
 
-    println!("Finished generating {} values", num_elements);
+    println!("Finished generating {num_elements} values");
 
     let hasher =
         PairwiseIndependentHasher::new_with_space_budget(num_elements, bits_per_key, max_interval)
@@ -35,11 +37,11 @@ fn bench(num_elements: usize, bits_per_key: u8, max_interval: u64) {
 
     values.sort_unstable();
 
-    println!("Finished sorting {} values", num_elements);
+    println!("Finished sorting {num_elements} values");
 
     let false_positives = AtomicUsize::new(0);
 
-    println!("Running {} queries", NUM_ITERATIONS);
+    println!("Running {NUM_ITERATIONS} queries");
 
     (0..NUM_ITERATIONS).into_par_iter().for_each(|_| {
         let x: u64 = rand::rng().random();
@@ -57,7 +59,7 @@ fn bench(num_elements: usize, bits_per_key: u8, max_interval: u64) {
     let false_positives = false_positives.load(Ordering::Acquire);
     let measured_epsilon = false_positives as f64 / NUM_ITERATIONS as f64;
 
-    println!("Measured false positive rate: {}", measured_epsilon);
+    println!("Measured false positive rate: {measured_epsilon}");
 }
 
 #[test]

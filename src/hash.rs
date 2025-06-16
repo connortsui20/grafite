@@ -3,7 +3,8 @@
 //!
 //! See the documentation for [`PairwiseIndependentHasher`] for more information.
 
-use crate::utils::*;
+use crate::utils::gen_prime;
+use rand::Rng;
 
 /// The default universe size for 64-bit unsigned integers, which is equivalent to [`u64::MAX`].
 pub const MAX_UNIVERSE_SIZE: u64 = u64::MAX;
@@ -54,6 +55,10 @@ impl PairwiseIndependentHasher {
     ///
     /// See Section 3 of the original paper for more information on how the hash function works and
     /// behaves.
+    /// 
+    /// # Errors
+    /// 
+    /// TODO
     pub fn new(num_elements: usize, epsilon: f64, max_interval: u64) -> Result<Self, ParamError> {
         if epsilon <= 0.0 || 1.0 <= epsilon {
             return Err(ParamError::InvalidEpsilon(epsilon));
@@ -75,12 +80,14 @@ impl PairwiseIndependentHasher {
 
         let reduced_universe_size = upper.checked_mul(lower).ok_or(ParamError::Overflow)?;
 
+        let mut rng = rand::rng();
+
         // Generate `p > r`.
-        let p = gen_prime(1 + reduced_universe_size..MAX_UNIVERSE_SIZE);
+        let p = gen_prime(&mut rng, 1 + reduced_universe_size..MAX_UNIVERSE_SIZE);
 
         // Generate two numbers `c1, c2 < p` with `c1 != 0`.
-        let c1 = gen_random(1..p);
-        let c2 = gen_random(0..p);
+        let c1 = rng.random_range(1..p);
+        let c2 = rng.random_range(0..p);
 
         Ok(Self {
             slope: c1,
@@ -97,6 +104,10 @@ impl PairwiseIndependentHasher {
     ///
     /// This function is used in [`Self::new_with_space_budget`] to calculate the false positive
     /// rate (epsilon).
+    /// 
+    /// # Errors
+    /// 
+    /// TODO
     pub fn epsilon_with_space_budget(
         bits_per_key: u8,
         max_interval: u64,
@@ -115,6 +126,10 @@ impl PairwiseIndependentHasher {
     /// Internally, this function will just calculate the false positive rate via
     /// `epsilon_with_budget` and use that `epsilon` as the parameter for the [`new`](Self::new)
     /// method above.
+    /// 
+    /// # Errors
+    /// 
+    /// TODO
     pub fn new_with_space_budget(
         num_elements: usize,
         bits_per_key: u8,
@@ -137,18 +152,21 @@ impl PairwiseIndependentHasher {
     /// behaves.
     ///
     /// [`new`]: [`Self::new`]
-    pub fn new_with_reduced(r: u64) -> Self {
-        let p = gen_prime(1 + r..MAX_UNIVERSE_SIZE);
+    pub fn new_with_reduced(reduced_universe_size: u64) -> Self {
+        let mut rng = rand::rng();
+
+        // Generate `p > r`.
+        let p = gen_prime(&mut rng, 1 + reduced_universe_size..MAX_UNIVERSE_SIZE);
 
         // Generate two numbers `c1, c2 < p` with `c1 != 0`.
-        let c1 = gen_random(1..p);
-        let c2 = gen_random(0..p);
+        let c1 = rng.random_range(1..p);
+        let c2 = rng.random_range(0..p);
 
         Self {
             slope: c1,
             intercept: c2,
             large_prime: p,
-            reduced_universe_size: r,
+            reduced_universe_size,
         }
     }
 
